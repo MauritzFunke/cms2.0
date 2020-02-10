@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %> 
+</head>
+<body>
+    
+    <%- include('../partials/navigation') %>
+    <div class="fullpage">
+    <div id="home" class="div active home">
+        <h1 class="title">Mauritz Funke</h1>
+        <p class="description">I am a Full Stack and Java developer. I have already done some small projects. Everything I done is self learned through research and testing.</p>
+    </div>
+    <div id="projects" class="div projects">
+        <table class="projectTable">
+            <tr>
+                <th class="tableCollum">Project</th>
+                <th class="tableCollum">Description</th>
+                <th class="tableCollum">Created at</th>
+                <th class="tableCollum">Latest update</th>
+                <th class="tableCollum">Language</th>
+            </tr>
+            <% repos.forEach(repo => { %>
+                <tr>
+                    <td><a target="_blank" href="<%-repo.html_url%>"><%-repo.name%></a></td>
+                    <td><%-repo.description%></td>
+                    <%
+                    var createdMonth = repo.created_at.getMonth() + 1
+                    var updatedMonth = repo.updated_at.getMonth() + 1
+
+                    var createdTime;
+                    if(repo.created_at.getUTCHours().toString().length == 1) {
+                        createdTime = "0" + repo.created_at.getUTCHours()    
+                    } else {
+                        createdTime = repo.created_at.getUTCHours();
+                    }
+                    createdTime += ":"
+                    if(repo.created_at.getUTCMinutes().toString().length == 1) {
+                        createdTime += "0" + repo.created_at.getUTCMinutes()
+                    } else {
+                        createdTime += repo.created_at.getUTCMinutes();
+                    }
+                    
+                    var updatedTime;
+                    if(repo.updated_at.getUTCHours().toString().length == 1) {
+                        updatedTime = "0" + repo.updated_at.getUTCHours()    
+                    } else {
+                        updatedTime = repo.updated_at.getUTCHours();
+                    }
+                    updatedTime += ":"
+                    if(repo.updated_at.getUTCMinutes().toString().length == 1) {
+                        updatedTime += "0" + repo.updated_at.getUTCMinutes()
+                    } else {
+                        updatedTime += repo.updated_at.getUTCMinutes();
+                    }
+                    
+                    %>
+                    <td><%-repo.created_at.getDate() + "." + createdMonth + "." + repo.created_at.getFullYear() + " " + createdTime%></td>
+                    <td><%-repo.updated_at.getDate() + "." + updatedMonth + "." + repo.updated_at.getFullYear() + " " + updatedTime%></td>
+                    <td><%-repo.language%></td>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+    <div id="skills" class="div skills">
+
+    </div>
+    <div id="contact" class="div contact">
+
+    </div>
+</div>
+
+    <script>
+        new fullpage('#fullpage', {
+	        anchors:['home', 'projects', 'skills', 'contact'],
+	        autoScrolling:true,
+            scrollHorizontally: true,
+            css3: true,
+            scrollingSpeed: 700,
+            scrollBar: false
+        });
+        //methods
+        fullpage_api.setAllowScrolling(false);
+    </script>
+    <script src="/static/js/active.js"></script>
+</body>
+</html>

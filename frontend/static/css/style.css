@@ -1,0 +1,93 @@
+html {
+    scroll-behavior: smooth;
+  }
+html body{
+    background-color: black;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+.nav {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+.nav-item {
+    float: left;
+    text-decoration: none;
+}
+  
+.nav-link{
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 1vh 3vh;
+    text-decoration: none;
+    transition: ease-out;
+    transition-duration: 500ms;
+}
+.nav-active {
+    background-color: rgb(16, 78, 0);
+}
+
+/* Change the link color to #111 (black) on hover */
+.nav-link:hover {
+    background-color: #111;
+}
+.home {
+    margin: 0;
+    padding: 2vh;
+    height: 100vh;
+    background-image: url(/static/images/home.JPG);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.projects {
+    padding: 4vh;
+    height: 100vh;
+    background: linear-gradient(#333, #111);
+}
+.title {
+    color: #ffffff;
+    text-align: right;
+}
+.description {
+    color: #ffffff;
+    text-align: right;
+}
+.projectTable {
+    margin: auto;
+    color: #ffffff;
+}
+.tableCollum {
+    padding: 5vh;
+}
+
+a {
+    transition: ease-in;
+    transition-duration: 250ms;
+}
+/* unvisited link */
+a:link {
+    color: green;
+}
+  
+/* visited link */
+a:visited {
+    color: green;
+}
+  
+/* mouse over link */
+a:hover {
+    color: white;
+}
+  
+/* selected link */
+a:active {
+    color: green;
+} 
