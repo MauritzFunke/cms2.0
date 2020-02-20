@@ -1,6 +1,7 @@
 import * as request from 'request';
-import debug from 'debug';
+import Debug from './debug';
 const link = "https://api.github.com/users/";
+import RepoSchema from '../models/Repo';
 
 
 export default class githubRequest{
@@ -9,11 +10,37 @@ export default class githubRequest{
 
     constructor(username: String) {
         this.username=username;
-        debug.log('Created a Github request for '+this.username);
+        Debug.log('Created a Github request for '+this.username);
     }
-
+    public updateRepos() {
+      this.getOwnedRepos((err, body) => {
+        if(err) throw err;
+        RepoSchema.deleteMany({}, (err) => {
+            if (err) throw err;
+            Debug.log('Deleted all Databases');
+        }).then(() => {
+            body.forEach(repo => {
+                const RepoSync = new RepoSchema({
+                    name: repo.name,
+                    html_url: repo.html_url,
+                    description: repo.description,
+                    created_at: repo.created_at,
+                    updated_at: repo.updated_at,
+                    language: repo.language
+                })
+                Debug.log(RepoSync);
+                RepoSync.save();
+            });
+        })
+    });
+    }
+    public getCount(callback) {
+      this.getOwnedRepos((err, cb) => {
+        return callback(err, cb.length);
+      })
+    }
     public getRepos(callback) {
-        debug.log('Getting the Repos from the user ' + this.username);
+        Debug.log('Getting the Repos from the user ' + this.username);
         var options = {
             url: link + this.username + '/repos',
             headers: {
@@ -32,7 +59,7 @@ export default class githubRequest{
     }
     public getOwnedRepos(callback) {
       var un = this.username;
-        debug.log('Getting the owned Repos from the user ' + un);
+        Debug.log('Getting the owned Repos from the user ' + un);
         var options = {
             url: link + un + '/repos?type=owner',
             headers: {
@@ -47,7 +74,6 @@ export default class githubRequest{
                 let parsed = JSON.parse(body);
                 parsed.forEach(repo => {
                     if(!repo.fork) {
-                        debug.log('Adding ' + repo.name);
                         filtered.push(repo)
                     }
                 });

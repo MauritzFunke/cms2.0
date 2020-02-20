@@ -18,6 +18,6 @@ const RepoSchema: Schema = new Schema({
   created_at: { type: Date, required: true },
   updated_at: { type: Date, required: true },
   language: { type: String, required: true }
-});
+}); 
 
 export default mongoose.model<IRepoSchema>('Repo', RepoSchema);

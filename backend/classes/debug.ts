@@ -1,8 +1,8 @@
-export default class debug {
+export default class Debug {
     private static active: boolean;
     
-    public static init(debug: boolean) {
-        this.active=debug;
+    public static init(active: boolean) {
+        this.active=active;
     }
     /**
      * log
@@ -11,6 +11,5 @@ export default class debug {
         if(this.active) {
             console.log('[Debug]: ' + text);
         }
-        
     }
 };

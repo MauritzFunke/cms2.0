@@ -1,42 +1,75 @@
-import * as request from 'request';
 import * as mongoose from 'mongoose';
-import * as fs from 'fs';
-import * as schedule from 'node-schedule';
-import debug from './classes/debug';
+import Debug from './classes/debug';
+import Scheduler from './classes/Scheduler';
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import Api from './classes/Api';
 import githubRequest from './classes/githubRequest';
-import RepoSchema from './models/Repo';
 
 const keys = require('./config/keys');
 const vars = require('./config/vars');
 
-debug.init(vars.debug);
+const app = express();
+const PORT = process.env.PORT || vars.PORT;
+const ghRq = new githubRequest("BumseBine");
 
-var ghreq = new githubRequest(vars.username);
 
+app.use(bodyParser.json());
+app.use(auth);
 
-mongoose.connect('mongodb://' + keys.mongo.user + ':'+keys.mongo.pwd +'@localhost:27017/website', err => {
+mongoose.connect('mongodb://' + keys.mongo.user + ':'+keys.mongo.pwd +'@localhost:27017/website', { useNewUrlParser: true, useUnifiedTopology: true}, err => {
     if (err) throw err;
-    debug.log('Connected to MongoDB');
+    Debug.log('Connected to MongoDB');
+});
+mongoose.connection.once('connected', () => {
+    Debug.init(vars.debug);
+    Scheduler.init();
+    Api.init();
 });
 
-var j = schedule.scheduleJob('0 * * * *', function(){
-    ghreq.getOwnedRepos((err, body) => {
-        if(err) throw err;
-        RepoSchema.deleteMany({}, (err) => {
-            if (err) throw err;
-            debug.log('Deleted all Databases');
-        });
-        body.forEach(repo => {
-            const RepoSync = new RepoSchema({
-                name: repo.name,
-                html_url: repo.html_url,
-                description: repo.description,
-                created_at: repo.created_at,
-                updated_at: repo.updated_at,
-                language: repo.language
-            })
-            console.log(RepoSync);
-            RepoSync.save();
+app.get('/totalRepos', (req, res) => {
+    ghRq.getCount((err, length) => {
+        res.json({
+            "count": length
         });
     });
 });
+
+app.get('/apiKeys', (req, res) => {
+    let keys = []
+    Api.getKeys().forEach(key => {
+        keys.push(key.toJSON());
+    })
+    res.json({
+        "keys": keys
+    })
+})
+app.get('/schedulers', (req, res) => {
+    let schedulers = []
+    Scheduler.getSchedulers().forEach(scheduler => {
+        schedulers.push(scheduler.toJSON());
+    })
+    res.json({
+        "schedulers": schedulers
+    })
+})
+app.post('/removeKey', (req, res) => {
+    Api.remove(req.body.key);
+})
+
+app.listen(PORT, (err) => {
+    if (err) throw err; 
+    Debug.log('Server started on port ' + PORT);
+});
+
+
+function auth(req, res, next) {
+    if(Api.auth(req.headers.key, req.headers.uuid)) {
+        next();
+    } else {
+        Debug.log("Invalid request");
+        res.json({
+            "Err": "Api Key or UUID could not be authenticated"
+        });
+    }
+}

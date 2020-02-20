@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %> 
+</head>
+<body>
+    <%- include('../partials/navigation') %>
+    <div class="container">
+        <div class="modal fade" id="removeKeyModal" tabindex="-1" role="dialog" aria-labelledby="removeKeyModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="removeKeyModalLabel">Remove Key</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Are you sure to delete the key?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                  <button onclick="removeKey()" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="row m-1">
+            <div class="col-sm-10"></div>
+            <div class="col-sm-2"><a class="align-left btn btn-success">Add a key</a></div>
+        </div>
+        <% if (typeof keys !== 'undefined') { %> 
+        <table class="table">
+            <thead>
+              <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Function</th>
+                    <th scope="col">UUID</th>
+                    <th scope="col">Count</th>
+                    <th scope="col">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% keys.forEach((key, i) => { %>
+                    <tr>
+                        <th scope="row"><%- i%></th>
+                        <td><%- key.name%> </td>
+                        <td><%- key.description%> </td>
+                        <td><%- key.key%> </td>
+                        <td><%- key.UUID%> </td>
+                        <td><%- key.count%> </td>
+                        <td><a class="text-danger" data-toggle="modal" onclick="addUUID('<%- key.UUID %>')" data-target="#removeKeyModal"><i class="fas fa-minus-square"></i></a></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% } else { %> 
+
+            <h1 class="text-center">No keys created</h1>
+
+        <% } %> 
+    </div>
+</body>
+</html>
