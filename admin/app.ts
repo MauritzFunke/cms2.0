@@ -44,7 +44,7 @@ app.get('/tasks', (req, res) => {
     getBackend("schedulers", (err, response) => {
         var parsed = JSON.parse(response).schedulers;
         res.render('sites/tasks', {
-            "schedulers": parsed
+            "tasks": parsed
         });
     });
 });
@@ -56,13 +56,29 @@ app.get('/api', (req,res) => {
         });
     })
 })
-app.get('/removeKey', (req, res) => {
-    res.redirect('/api');
-    postBackend('removeKey', {'key': req.query.key}, (err, response) => {
+app.get('/removeTask', (req, res) => {
+    postBackend('removeTask', {'id': req.query.id}, (err, response) => {
         if (err) throw err;
     })
+    res.redirect('/tasks');
 })
-
+app.get('/addTask', (req, res) => {
+    postBackend('addTask', {'name': req.query.name, 'description': req.query.description, 'time': req.query.time, 'func': req.query.func, 'args': req.query.args}, (err, response) => {
+        res.redirect('tasks');
+    })
+})
+app.get('/removeKey', (req, res) => {
+    postBackend('removeKey', {'_id': req.query._id}, (err, response) => {
+        if (err) throw err;
+    })
+    res.redirect('/api');
+})
+app.get('/addKey', (req, res) => {
+    postBackend('addKey', {'name': req.query.name, 'description': req.query.description, 'type': req.query.type}, (err, response) => {
+        if (err) throw err;
+    })
+    res.redirect('api');
+})
 function getBackend(link: String, callback: Function) {
     const opt = {
        url: 'http://localhost:3002/' + link,

@@ -5,8 +5,72 @@
 </head>
 <body>
     <%- include('../partials/navigation') %>
+    <div class="modal fade" id="removeTaskModal" tabindex="-1" role="dialog" aria-labelledby="removeTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="removeTaskModalLabel">Remove Task</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure to delete the task?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+              <button onclick="removeTask()" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addTaskModalLabel">Add Task</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <label for="taskName">Name</label>
+                  <input required type="text" class="form-control" id="taskName">
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <input required type="text" class="form-control" id="taskDescription">
+                  </div>
+                  <div class="form-group">
+                    <label for="taskTime">Time</label>
+                    <input required type="number" class="form-control" id="taskTime">
+                  </div>
+                  <div class="form-group">
+                    <label for="taskFunc">Function</label>
+                    <input required type="text" class="form-control" id="taskFunc">
+                  </div>
+                  <div class="form-group">
+                    <label for="taskArgs">Arguments</label>
+                    <input type="text" class="form-control" id="taskArgs">
+                  </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+              <button onclick="addTask()" type="submit" class="btn btn-success" data-dismiss="modal">Create</button>
+            </div>
+          </div>
+        </div>
+      </div>
     <div class="container">
-        <% if (typeof schedulers !== 'undefined') { %> 
+        <div class="row m-1">
+          <div class="col-sm-10" id="apiError">
+          </div>
+            <div class="col-sm-2"><a data-toggle="modal" data-target="#addTaskModal" class="align-left btn btn-success">Add a task</a></div>
+        </div>
+        <% if (typeof tasks !== 'undefined') { %> 
         <table class="table">
             <thead>
               <tr>
@@ -16,26 +80,28 @@
                     <th scope="col">Description</th>
                     <th scope="col">Function</th>
                     <th scope="col">Args</th>
+                    <th scope="col">ID</th>
                     <th scope="col">Remove</th>
               </tr>
             </thead>
             <tbody>
-                <% schedulers.forEach((scheduler, i) => { %>
+                <% tasks.forEach((task, i) => { %>
                     <tr>
                         <th scope="row"><%- i%></th>
-                        <td><%- scheduler.time%> </td>
-                        <td><%- scheduler.name%> </td>
-                        <td><%- scheduler.description%> </td>
-                        <td><%- scheduler.func%> </td>
-                        <td><%- scheduler.args%> </td>
-                        <td><a class="text-danger" href="/remove"><i class="fas fa-minus-square"></i></a></td>
+                        <td><%- task.time%> </td>
+                        <td><%- task.name%> </td>
+                        <td><%- task.description%> </td>
+                        <td><%- task.func%> </td>
+                        <td><%- task.args%> </td>
+                        <td><%- task._id%> </td>
+                        <td><a class="text-danger" data-toggle="modal" onclick="addID('<%- task._id %>')" data-target="#removeTaskModal"><i class="fas fa-minus-square"></i></a></td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
         <% } else { %> 
 
-            <h1 class="text-center">No tasks defined</h1>
+            <h1 class="text-center">No tasks created</h1>
 
         <% } %> 
     </div>
